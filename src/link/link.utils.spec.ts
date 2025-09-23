@@ -1,4 +1,4 @@
-import {normalisePath, validatePath, validateType} from "./link.utils";
+import {normalisePath, validatePath, validateType} from "./link.utils.ts";
 
 describe("utils", () => {
   describe("normalisePath", () => {

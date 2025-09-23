@@ -7,7 +7,7 @@ import {
   ListLinksQuerySchema,
   PaginatedLinksSchema,
   UpdateLinkSchema,
-} from "./link.schema";
+} from "./link.schema.ts";
 
 export const createLinkRoute = createRoute({
   method: "post",

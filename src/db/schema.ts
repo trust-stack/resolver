@@ -10,4 +10,9 @@ export const links = sqliteTable("links", {
   relationType: text("relation_type").notNull(),
   href: text("href"),
   title: text("title"),
+  type: text("type"),
+  isDefault: integer("is_default", {mode: "boolean"})
+    .notNull()
+    .default(false),
+  hreflang: text("hreflang", {mode: "json"}).$type<string[] | null>(),
 });

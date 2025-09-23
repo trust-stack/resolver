@@ -6,8 +6,8 @@ import {
   getLinkRoute,
   listLinksRoute,
   updateLinkRoute,
-} from "./link.route";
-import {linksService} from "./link.service";
+} from "./link.route.ts";
+import {linksService} from "./link.service.ts";
 
 const app = new OpenAPIHono();
 

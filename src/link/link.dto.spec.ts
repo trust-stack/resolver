@@ -3,7 +3,7 @@ import {
   buildPaginatedLinksDto,
   mapLinkRowToDto,
   mapLinkRowsToDto,
-} from "./link.dto";
+} from "./link.dto.ts";
 
 const baseRow = (): LinkRow => ({
   id: "link-id",
@@ -12,6 +12,9 @@ const baseRow = (): LinkRow => ({
   relationType: "related",
   href: "https://example.com",
   title: "Example",
+  type: "text/html",
+  isDefault: false,
+  hreflang: ["en"],
 });
 
 describe("link dto mappers", () => {
@@ -24,6 +27,9 @@ describe("link dto mappers", () => {
       relationType: row.relationType,
       href: row.href,
       title: row.title,
+      type: row.type,
+      hreflang: row.hreflang,
+      default: false,
     });
   });
 
@@ -32,11 +38,15 @@ describe("link dto mappers", () => {
       ...baseRow(),
       href: null,
       title: null,
+      type: null,
+      hreflang: null,
     };
 
     const dto = mapLinkRowToDto(row, {
       href: "fallback-href",
       title: "fallback-title",
+      type: "text/html",
+      hreflang: ["en"],
     });
 
     expect(dto).toEqual({
@@ -45,6 +55,9 @@ describe("link dto mappers", () => {
       relationType: row.relationType,
       href: "fallback-href",
       title: "fallback-title",
+      type: "text/html",
+      hreflang: ["en"],
+      default: false,
     });
   });
 
@@ -81,6 +94,9 @@ describe("link dto mappers", () => {
           relationType: "related",
           href: "https://example.com",
           title: "Example",
+          type: "text/html",
+          hreflang: ["en"],
+          default: false,
         },
       ],
       page: 2,

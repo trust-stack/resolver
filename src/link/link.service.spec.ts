@@ -1,9 +1,9 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
-vi.mock("../db/instance", () => ({getDb: vi.fn()}));
+vi.mock("../db/instance.ts", () => ({getDb: vi.fn()}));
 
-import {links} from "../db/schema";
-import {LinkService} from "./link.service";
+import {links} from "../db/schema.ts";
+import {LinkService} from "./link.service.ts";
 
 type MockDb = {
   insert: ReturnType<typeof vi.fn>;
@@ -19,13 +19,21 @@ const createMockDb = (): MockDb => ({
   delete: vi.fn(),
 });
 
-const linkRow = () => ({
+const linkRowBase = () => ({
   id: "link-id",
   createdAt: new Date(),
   path: "qualifier/identifier",
   relationType: "related",
   href: "https://example.com",
   title: "Example",
+  type: "text/html",
+  isDefault: false,
+  hreflang: ["en"],
+});
+
+const linkRow = (overrides: Partial<ReturnType<typeof linkRowBase>> = {}) => ({
+  ...linkRowBase(),
+  ...overrides,
 });
 
 describe("LinkService", () => {
@@ -40,7 +48,7 @@ describe("LinkService", () => {
 
   describe("createLink", () => {
     it("creates and returns a link", async () => {
-      const returning = vi.fn().mockResolvedValue([linkRow()]);
+      const returning = vi.fn().mockResolvedValue([linkRow({isDefault: true})]);
       db.insert.mockReturnValue({
         values: vi.fn().mockReturnValue({returning}),
       });
@@ -50,9 +58,17 @@ describe("LinkService", () => {
         relationType: "related",
         href: "https://example.com",
         title: "Example",
+        type: "text/html",
+        default: true,
+        hreflang: ["en"],
       });
 
-      expect(result).toMatchObject({id: "link-id"});
+      expect(result).toMatchObject({
+        id: "link-id",
+        type: "text/html",
+        default: true,
+        hreflang: ["en"],
+      });
       expect(db.insert).toHaveBeenCalledWith(links);
       expect(returning).toHaveBeenCalled();
     });

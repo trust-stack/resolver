@@ -1,0 +1,514 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Trust Stack Resolver API",
+    "version": "1.0.0",
+    "description": "ISO Link Resolver endpoints for managing and resolving link sets."
+  },
+  "servers": [
+    {
+      "url": "https://truststack.link"
+    }
+  ],
+  "components": {
+    "schemas": {},
+    "parameters": {}
+  },
+  "paths": {
+    "/links": {
+      "post": {
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "example": "entity/abc"
+                  },
+                  "relationType": {
+                    "type": "string",
+                    "example": "related"
+                  },
+                  "href": {
+                    "type": "string",
+                    "format": "uri",
+                    "example": "https://example.com"
+                  },
+                  "title": {
+                    "type": "string",
+                    "example": "Example"
+                  },
+                  "type": {
+                    "type": "string",
+                    "example": "application/json"
+                  },
+                  "default": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "hreflang": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "en"
+                    ]
+                  }
+                },
+                "required": [
+                  "path",
+                  "relationType",
+                  "href",
+                  "title"
+                ],
+                "description": "Payload to create a link"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Link created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "path": {
+                      "type": "string"
+                    },
+                    "relationType": {
+                      "type": "string"
+                    },
+                    "href": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "default": {
+                      "type": "boolean"
+                    },
+                    "hreflang": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "path",
+                    "relationType",
+                    "href",
+                    "title"
+                  ],
+                  "description": "Link representation"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "example": 1
+            },
+            "required": false,
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10,
+              "example": 10
+            },
+            "required": false,
+            "name": "perPage",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List links",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          },
+                          "relationType": {
+                            "type": "string"
+                          },
+                          "href": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "default": {
+                            "type": "boolean"
+                          },
+                          "hreflang": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "path",
+                          "relationType",
+                          "href",
+                          "title"
+                        ],
+                        "description": "Link representation"
+                      }
+                    },
+                    "page": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "perPage": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "total": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "totalPages": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "page",
+                    "perPage",
+                    "total",
+                    "totalPages"
+                  ],
+                  "description": "Paginated list of links"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/links/{id}": {
+      "get": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "link_123"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Found link",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "path": {
+                      "type": "string"
+                    },
+                    "relationType": {
+                      "type": "string"
+                    },
+                    "href": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "default": {
+                      "type": "boolean"
+                    },
+                    "hreflang": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "path",
+                    "relationType",
+                    "href",
+                    "title"
+                  ],
+                  "description": "Link representation"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Link not found"
+          }
+        }
+      },
+      "patch": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "link_123"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "example": "entity/abc"
+                  },
+                  "relationType": {
+                    "type": "string",
+                    "example": "related"
+                  },
+                  "href": {
+                    "type": "string",
+                    "format": "uri",
+                    "example": "https://example.com"
+                  },
+                  "title": {
+                    "type": "string",
+                    "example": "Example"
+                  },
+                  "type": {
+                    "type": "string",
+                    "example": "application/json"
+                  },
+                  "default": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "hreflang": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "en"
+                    ]
+                  }
+                },
+                "description": "Partial update payload for a link"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated link",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "path": {
+                      "type": "string"
+                    },
+                    "relationType": {
+                      "type": "string"
+                    },
+                    "href": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "default": {
+                      "type": "boolean"
+                    },
+                    "hreflang": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "path",
+                    "relationType",
+                    "href",
+                    "title"
+                  ],
+                  "description": "Link representation"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Link not found"
+          }
+        }
+      },
+      "delete": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "link_123"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Link deleted"
+          },
+          "404": {
+            "description": "Link not found"
+          }
+        }
+      }
+    },
+    "/*": {
+      "get": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "example": "linkset"
+            },
+            "required": false,
+            "name": "linkType",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resolved linkset",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "linkset": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "anchor": {
+                            "type": "string",
+                            "format": "uri"
+                          },
+                          "linkset": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "href": {
+                                  "type": "string",
+                                  "format": "uri"
+                                },
+                                "title": {
+                                  "type": "string"
+                                },
+                                "hreflang": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
+                                "type": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "href"
+                              ],
+                              "description": "Linkset entry"
+                            }
+                          }
+                        },
+                        "required": [
+                          "anchor",
+                          "linkset"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "linkset"
+                  ],
+                  "description": "Linkset response payload"
+                }
+              }
+            }
+          },
+          "307": {
+            "description": "Redirect to resolved link"
+          },
+          "404": {
+            "description": "No matching link"
+          }
+        }
+      }
+    }
+  }
+}

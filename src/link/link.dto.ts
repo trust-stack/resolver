@@ -1,13 +1,13 @@
 import z from "zod";
 
-import {links} from "../db/schema";
+import {links} from "../db/schema.ts";
 import {
   CreateLinkSchema,
   LinkSchema,
   ListLinksQuerySchema,
   PaginatedLinksSchema,
   UpdateLinkSchema,
-} from "./link.schema";
+} from "./link.schema.ts";
 
 export type CreateLinkDto = z.infer<typeof CreateLinkSchema>;
 export type LinkDto = z.infer<typeof LinkSchema>;
@@ -16,7 +16,10 @@ export type ListLinksQueryDto = z.infer<typeof ListLinksQuerySchema>;
 export type PaginatedLinksDto = z.infer<typeof PaginatedLinksSchema>;
 
 export type LinkRow = typeof links.$inferSelect;
-type LinkDtoFallback = Pick<LinkDto, "href" | "title">;
+type LinkDtoFallback = Pick<
+  LinkDto,
+  "href" | "title" | "type" | "hreflang" | "default"
+>;
 
 export function mapLinkRowToDto(
   row: LinkRow,
@@ -24,6 +27,9 @@ export function mapLinkRowToDto(
 ): LinkDto {
   const href = row.href ?? fallback?.href;
   const title = row.title ?? fallback?.title;
+  const type = row.type ?? fallback?.type;
+  const hreflang = row.hreflang ?? fallback?.hreflang;
+  const isDefault = row.isDefault ?? fallback?.default;
 
   if (href == null) {
     throw new Error("Link href is required to create DTO");
@@ -39,6 +45,9 @@ export function mapLinkRowToDto(
     relationType: row.relationType,
     href,
     title,
+    type,
+    hreflang,
+    default: isDefault ?? undefined,
   };
 }
 

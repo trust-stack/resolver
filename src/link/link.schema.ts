@@ -11,6 +11,8 @@ export const CreateLinkSchema = z
     href: z.string().url().openapi({example: "https://example.com"}),
     title: z.string().openapi({example: "Example"}),
     type: z.string().optional().openapi({example: "application/json"}),
+    default: z.boolean().optional().openapi({example: true}),
+    hreflang: z.array(z.string()).optional().openapi({example: ["en"]}),
   })
   .openapi({description: "Payload to create a link"});
 
@@ -25,6 +27,9 @@ export const LinkSchema = z
     relationType: z.string(),
     href: z.string(),
     title: z.string(),
+    type: z.string().optional(),
+    default: z.boolean().optional(),
+    hreflang: z.array(z.string()).optional(),
   })
   .openapi({description: "Link representation"});
 

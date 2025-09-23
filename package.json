@@ -4,8 +4,10 @@
   "description": "",
   "type": "module",
   "scripts": {
-    "build": "tsc --noEmit",
-    "test": "vitest"
+    "build": "tsc --noEmit && node --loader ./scripts/ts-loader.mjs scripts/generate-openapi.ts",
+    "generate:openapi": "node --loader ./scripts/ts-loader.mjs scripts/generate-openapi.ts",
+    "test": "vitest",
+    "test:e2e": "vitest --config vitest.e2e.config.ts"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +21,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.5.2",
+    "better-sqlite3": "^9.6.0",
     "drizzle-kit": "^0.31.4",
     "prettier": "^3.6.2",
     "tsx": "^4.20.5",

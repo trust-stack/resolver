@@ -1,6 +1,6 @@
 import {asc, eq, sql} from "drizzle-orm";
 import {randomUUID} from "node:crypto";
-import {DB, getDb, links} from "../db";
+import {DB, getDb, links} from "../db/index.ts";
 import {
   CreateLinkDto,
   LinkDto,
@@ -10,8 +10,8 @@ import {
   UpdateLinkDto,
   buildPaginatedLinksDto,
   mapLinkRowToDto,
-} from "./link.dto";
-import {normalisePath, validatePath, validateType} from "./link.utils";
+} from "./link.dto.ts";
+import {normalisePath, validatePath, validateType} from "./link.utils.ts";
 
 export class LinkService {
   constructor(private readonly db: DB) {}
@@ -28,6 +28,9 @@ export class LinkService {
         relationType: dto.relationType,
         href: dto.href,
         title: dto.title,
+        type: dto.type,
+        isDefault: dto.default ?? false,
+        hreflang: dto.hreflang,
       })
       .returning();
 
@@ -38,6 +41,9 @@ export class LinkService {
     return mapLinkRowToDto(link, {
       href: dto.href,
       title: dto.title,
+      type: dto.type,
+      hreflang: dto.hreflang,
+      default: dto.default,
     });
   }
 
@@ -77,6 +83,18 @@ export class LinkService {
       updates.title = dto.title;
     }
 
+    if (dto.type !== undefined) {
+      updates.type = dto.type;
+    }
+
+    if (dto.default !== undefined) {
+      updates.isDefault = dto.default;
+    }
+
+    if (dto.hreflang !== undefined) {
+      updates.hreflang = dto.hreflang;
+    }
+
     if (Object.keys(updates).length === 0) {
       return this.getLink(id);
     }
@@ -94,6 +112,9 @@ export class LinkService {
     return mapLinkRowToDto(link, {
       href: dto.href,
       title: dto.title,
+      type: dto.type,
+      hreflang: dto.hreflang,
+      default: dto.default,
     });
   }
 
