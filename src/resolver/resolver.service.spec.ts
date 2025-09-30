@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const repoMock = vi.hoisted(() => ({ listByPath: vi.fn() }));
 
-vi.mock('src/request-context', () => ({
+vi.mock('../request-context', () => ({
   getRequestContext: () => ({
     resolverRepository: { listByPath: repoMock.listByPath },
   }),
