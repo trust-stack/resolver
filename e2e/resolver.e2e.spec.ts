@@ -1,26 +1,21 @@
-import Database from "better-sqlite3";
-import {drizzle} from "drizzle-orm/better-sqlite3";
-import {migrate} from "drizzle-orm/better-sqlite3/migrator";
-import {resolve} from "node:path";
-import {beforeAll, afterAll, beforeEach, describe, expect, it, vi} from "vitest";
+import Database from 'better-sqlite3';
+import { drizzle } from 'drizzle-orm/better-sqlite3';
+import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
+import { resolve } from 'node:path';
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { App } from '../src';
 
-const dbRef = vi.hoisted(() => ({current: undefined as ReturnType<typeof drizzle> | undefined}));
-
-vi.mock("../src/db/instance.ts", () => ({
-  getDb: () => {
-    if (!dbRef.current) {
-      throw new Error("Test database has not been initialised");
-    }
-    return dbRef.current;
-  },
+const dbRef = vi.hoisted(() => ({
+  current: undefined as ReturnType<typeof drizzle> | undefined,
 }));
 
-import app from "../src/index.ts";
+import { defaultSqliteOptions } from 'src/infra/sqlite';
+import { createApp } from '../src';
 
 let sqlite: Database.Database;
 
 const resetData = () => {
-  sqlite.exec("DELETE FROM links;");
+  sqlite.exec('DELETE FROM links;');
 };
 
 type CreateLinkPayload = {
@@ -33,13 +28,16 @@ type CreateLinkPayload = {
   hreflang?: string[];
 };
 
-describe("resolver e2e", () => {
+describe('resolver e2e', () => {
+  let app: App;
+
   beforeAll(async () => {
-    sqlite = new Database(":memory:");
+    sqlite = new Database(':memory:');
     dbRef.current = drizzle(sqlite);
     await migrate(dbRef.current, {
-      migrationsFolder: resolve(process.cwd(), "drizzle"),
+      migrationsFolder: resolve(process.cwd(), 'drizzle'),
     });
+    app = createApp(defaultSqliteOptions(dbRef.current as any));
   });
 
   afterAll(() => {
@@ -51,9 +49,13 @@ describe("resolver e2e", () => {
   });
 
   const createLink = async (payload: CreateLinkPayload) => {
-    const response = await app.request("/links", {
-      method: "POST",
-      headers: {"content-type": "application/json"},
+    const response = await app.request('/links', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-organization-id': '123',
+        'x-tenant-id': '456',
+      },
       body: JSON.stringify(payload),
     });
 
@@ -61,65 +63,63 @@ describe("resolver e2e", () => {
     return response.json();
   };
 
-  describe("default redirects", () => {
-    it("redirects to the default link of the underlying link set", async () => {
+  describe('default redirects', () => {
+    it('redirects to the default link of the underlying link set', async () => {
       const dto: CreateLinkPayload = {
-        path: "/qualifier/identifier",
-        relationType: "untp:dpp",
-        href: "https://example.com",
-        title: "Test Link",
-        type: "text/html",
+        path: '/qualifier/identifier',
+        relationType: 'untp:dpp',
+        href: 'https://example.com',
+        title: 'Test Link',
+        type: 'text/html',
         default: true,
-        hreflang: ["en"],
+        hreflang: ['en'],
       };
 
       await createLink(dto);
 
-      const response = await app.request("/qualifier/identifier");
+      const response = await app.request('/qualifier/identifier');
 
       expect(response.status).toBe(307);
-      expect(response.headers.get("location")).toBe(dto.href);
+      expect(response.headers.get('location')).toBe(dto.href);
     });
 
-    it("returns a 404 if no default link is found", async () => {
+    it('returns a 404 if no default link is found', async () => {
       const dto: CreateLinkPayload = {
-        path: "/qualifier/identifier",
-        relationType: "alternate",
-        href: "https://example.com",
-        title: "Test Link",
-        type: "text/html",
-        hreflang: ["en"],
+        path: '/qualifier/identifier',
+        relationType: 'alternate',
+        href: 'https://example.com',
+        title: 'Test Link',
+        type: 'text/html',
+        hreflang: ['en'],
       };
 
       await createLink(dto);
 
-      const response = await app.request("/qualifier/identifier");
+      const response = await app.request('/qualifier/identifier');
 
       expect(response.status).toBe(404);
     });
   });
 
-  describe("linkType=linkset", () => {
-    it("returns all links in the underlying link set", async () => {
+  describe('linkType=linkset', () => {
+    it('returns all links in the underlying link set', async () => {
       const base: CreateLinkPayload = {
-        path: "/qualifier/identifier",
-        relationType: "untp:dpp",
-        href: "https://example.com",
-        title: "Test Link",
-        type: "text/html",
-        hreflang: ["en"],
+        path: '/qualifier/identifier',
+        relationType: 'untp:dpp',
+        href: 'https://example.com',
+        title: 'Test Link',
+        type: 'text/html',
+        hreflang: ['en'],
       };
 
-      await createLink({...base});
+      await createLink({ ...base });
       await createLink({
         ...base,
-        href: "https://example.com/fr",
-        hreflang: ["fr"],
+        href: 'https://example.com/fr',
+        hreflang: ['fr'],
       });
 
-      const response = await app.request(
-        "/qualifier/identifier?linkType=linkset"
-      );
+      const response = await app.request('/qualifier/identifier?linkType=linkset');
 
       expect(response.status).toBe(200);
       const body = await response.json();
@@ -127,19 +127,19 @@ describe("resolver e2e", () => {
       expect(body).toEqual({
         linkset: [
           {
-            anchor: "https://truststack.link/qualifier/identifier",
+            anchor: 'https://truststack.link/qualifier/identifier',
             linkset: expect.arrayContaining([
               {
-                href: "https://example.com",
-                title: "Test Link",
-                hreflang: ["en"],
-                type: "text/html",
+                href: 'https://example.com',
+                title: 'Test Link',
+                hreflang: ['en'],
+                type: 'text/html',
               },
               {
-                href: "https://example.com/fr",
-                title: "Test Link",
-                hreflang: ["fr"],
-                type: "text/html",
+                href: 'https://example.com/fr',
+                title: 'Test Link',
+                hreflang: ['fr'],
+                type: 'text/html',
               },
             ]),
           },
@@ -147,51 +147,45 @@ describe("resolver e2e", () => {
       });
     });
 
-    it("returns 404 if no links exist", async () => {
-      const response = await app.request(
-        "/qualifier/identifier?linkType=linkset"
-      );
+    it('returns 404 if no links exist', async () => {
+      const response = await app.request('/qualifier/identifier?linkType=linkset');
 
       expect(response.status).toBe(404);
     });
   });
 
-  describe("linkType query parameter", () => {
-    it("redirects when the relation type matches", async () => {
+  describe('linkType query parameter', () => {
+    it('redirects when the relation type matches', async () => {
       const dto: CreateLinkPayload = {
-        path: "/qualifier/identifier",
-        relationType: "untp:dpp",
-        href: "https://example.com",
-        title: "Test Link",
-        type: "text/html",
-        hreflang: ["en"],
+        path: '/qualifier/identifier',
+        relationType: 'untp:dpp',
+        href: 'https://example.com',
+        title: 'Test Link',
+        type: 'text/html',
+        hreflang: ['en'],
       };
 
       await createLink(dto);
 
-      const response = await app.request(
-        "/qualifier/identifier?linkType=untp:dpp"
-      );
+      const response = await app.request('/qualifier/identifier?linkType=untp:dpp');
 
       expect(response.status).toBe(307);
-      expect(response.headers.get("location")).toBe(dto.href);
+      expect(response.headers.get('location')).toBe(dto.href);
     });
 
-    it("returns 404 when relation type does not match", async () => {
+    it('returns 404 when relation type does not match', async () => {
       const dto: CreateLinkPayload = {
-        path: "/qualifier/identifier",
-        relationType: "gs1:pip",
-        href: "https://example.com",
-        title: "Test Link",
-        type: "text/html",
-        hreflang: ["en"],
+        path: '/qualifier/identifier',
+        relationType: 'gs1:pip',
+        href: 'https://example.com',
+        title: 'Test Link',
+        type: 'text/html',
+        hreflang: ['en'],
       };
 
       await createLink(dto);
 
-      const response = await app.request(
-        "/qualifier/identifier?linkType=untp:dpp"
-      );
+      const response = await app.request('/qualifier/identifier?linkType=untp:dpp');
 
       expect(response.status).toBe(404);
     });

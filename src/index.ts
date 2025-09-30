@@ -1,15 +1,33 @@
-import {OpenAPIHono} from "@hono/zod-openapi";
+import { OpenAPIHono } from '@hono/zod-openapi';
+import { contextStorage } from 'hono/context-storage';
+import links from './link/link.handler';
+import { LinkRepository } from './link/link.repository';
+import { getOpenApiConfig } from './openapi/config';
+import { authMiddleware, dependencyMiddlewareFactory } from './request-context';
+import resolver from './resolver/resolver.handler';
+import { ResolverRepository } from './resolver/resolver.repository';
 
-import links from "./link/link.handler.ts";
-import {getOpenApiConfig} from "./openapi/config.ts";
-import resolver from "./resolver/resolver.handler.ts";
+export type AppOptions = {
+  linksRepository: LinkRepository;
+  resolverRepository: ResolverRepository;
+};
 
-const app = new OpenAPIHono();
+export function createApp(options: AppOptions) {
+  const app = new OpenAPIHono();
+  app.doc('/openapi.json', () => getOpenApiConfig());
 
-app.route("/links", links);
+  app.use(contextStorage());
+  app.use(dependencyMiddlewareFactory(options));
+  // Auth + DI only for /links endpoints (root and nested)
+  app.use('/links', authMiddleware);
+  app.use('/links/*', authMiddleware);
+  app.route('/links', links);
 
-app.doc("/openapi.json", () => getOpenApiConfig());
+  // Public resolver routes (mounted after /links to avoid catch-all collisions)
 
-app.route("/", resolver);
+  app.route('/', resolver);
 
-export default app;
+  return app;
+}
+
+export type App = ReturnType<typeof createApp>;

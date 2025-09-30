@@ -1,10 +1,10 @@
-import {z} from "@hono/zod-openapi";
+import { z } from '@hono/zod-openapi';
 
 export const ResolverQuerySchema = z
   .object({
-    linkType: z.string().optional().openapi({example: "linkset"}),
+    linkType: z.string().optional().openapi({ example: 'linkset' }),
   })
-  .openapi({description: "Resolver query parameters"});
+  .openapi({ description: 'Resolver query parameters' });
 
 export const LinksetEntrySchema = z
   .object({
@@ -13,7 +13,7 @@ export const LinksetEntrySchema = z
     hreflang: z.array(z.string()).optional(),
     type: z.string().optional(),
   })
-  .openapi({description: "Linkset entry"});
+  .openapi({ description: 'Linkset entry' });
 
 export const LinksetResponseSchema = z
   .object({
@@ -21,7 +21,7 @@ export const LinksetResponseSchema = z
       z.object({
         anchor: z.string().url(),
         linkset: z.array(LinksetEntrySchema),
-      })
+      }),
     ),
   })
-  .openapi({description: "Linkset response payload"});
+  .openapi({ description: 'Linkset response payload' });

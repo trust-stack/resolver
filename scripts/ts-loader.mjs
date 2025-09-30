@@ -1,26 +1,27 @@
-import {existsSync} from "node:fs";
-import {readFile} from "node:fs/promises";
-import {fileURLToPath, pathToFileURL} from "node:url";
-import ts from "typescript";
+import { existsSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import ts from 'typescript';
 
 export async function resolve(specifier, context, defaultResolve) {
-  const parentURL = context.parentURL || pathToFileURL(process.cwd() + "/");
+  const parentURL = context.parentURL || pathToFileURL(process.cwd() + '/');
 
   const convertSpecifier = () => {
-    if (specifier === "drizzle-orm/libsql") {
-      return new URL("./stubs/drizzle-orm-libsql.ts", pathToFileURL(`${process.cwd()}/scripts/`)).href;
+    if (specifier === 'drizzle-orm/libsql') {
+      return new URL('./stubs/drizzle-orm-libsql.ts', pathToFileURL(`${process.cwd()}/scripts/`))
+        .href;
     }
 
-    if (specifier.endsWith(".ts")) {
+    if (specifier.endsWith('.ts')) {
       return new URL(specifier, parentURL).href;
     }
 
-    if (specifier.startsWith("file://")) {
+    if (specifier.startsWith('file://')) {
       const url = new URL(specifier);
       if (existsSync(fileURLToPath(url))) {
         return url.href;
       }
-      if (!url.pathname.endsWith(".ts")) {
+      if (!url.pathname.endsWith('.ts')) {
         const candidateUrl = new URL(`${url.pathname}.ts`, url);
         if (existsSync(fileURLToPath(candidateUrl))) {
           return candidateUrl.href;
@@ -36,10 +37,8 @@ export async function resolve(specifier, context, defaultResolve) {
     }
 
     if (
-      (specifier.startsWith("./") ||
-        specifier.startsWith("../") ||
-        specifier.startsWith("/")) &&
-      !specifier.endsWith(".ts")
+      (specifier.startsWith('./') || specifier.startsWith('../') || specifier.startsWith('/')) &&
+      !specifier.endsWith('.ts')
     ) {
       const tsUrl = new URL(`${specifier}.ts`, parentURL);
       if (existsSync(fileURLToPath(tsUrl))) {
@@ -69,7 +68,7 @@ export async function resolve(specifier, context, defaultResolve) {
 }
 
 export async function load(url, context, defaultLoad) {
-  if (url.endsWith(".ts")) {
+  if (url.endsWith('.ts')) {
     const source = await readFile(new URL(url));
     const transpiled = ts.transpileModule(source.toString(), {
       compilerOptions: {
@@ -83,7 +82,7 @@ export async function load(url, context, defaultLoad) {
     });
 
     return {
-      format: "module",
+      format: 'module',
       source: transpiled.outputText,
       shortCircuit: true,
     };
