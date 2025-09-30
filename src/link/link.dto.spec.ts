@@ -10,6 +10,9 @@ const baseRow = (): LinkRow => ({
   type: 'text/html',
   isDefault: false,
   hreflang: ['en'],
+  tenantId: 'tenant_123',
+  organizationId: 'org_123',
+  userId: null,
 });
 
 describe('link dto mappers', () => {

@@ -1,8 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('../db/instance', () => ({ getDb: vi.fn() }));
+const repoMock = vi.hoisted(() => ({ listByPath: vi.fn() }));
 
-import { ResolverService } from './resolver.service';
+vi.mock('src/request-context', () => ({
+  getRequestContext: () => ({
+    resolverRepository: { listByPath: repoMock.listByPath },
+  }),
+}));
+
+import { resolve as resolvePath } from './resolver.service';
 
 const baseRow = () => ({
   id: 'link-id',
@@ -16,45 +22,15 @@ const baseRow = () => ({
   hreflang: ['en'],
 });
 
-type SelectChain = {
-  from: ReturnType<typeof vi.fn>;
-  where: ReturnType<typeof vi.fn>;
-  orderBy: ReturnType<typeof vi.fn>;
-};
-
-type MockDb = {
-  select: ReturnType<typeof vi.fn>;
-};
-
-const createSelectChain = (rows: any[]): SelectChain => {
-  const orderBy = vi.fn().mockResolvedValue(rows);
-  const where = vi.fn().mockReturnValue({ orderBy });
-  const from = vi.fn().mockReturnValue({ where });
-  return { from, where, orderBy };
-};
-
-describe('ResolverService', () => {
-  let db: MockDb;
-  let service: ResolverService;
-
+describe('resolver resolve()', () => {
   beforeEach(() => {
-    db = {
-      select: vi.fn(),
-    };
-    service = new ResolverService(db as any, 'https://truststack.link');
-    vi.clearAllMocks();
+    repoMock.listByPath.mockReset();
   });
 
-  const mockSelectOnce = (rows: any[]) => {
-    const chain = createSelectChain(rows);
-    db.select.mockReturnValueOnce({ from: chain.from });
-    return chain;
-  };
-
   it('redirects to default link when no query is provided', async () => {
-    mockSelectOnce([{ ...baseRow(), isDefault: true }, baseRow()]);
+    repoMock.listByPath.mockResolvedValueOnce([{ ...baseRow(), isDefault: true }, baseRow()]);
 
-    const result = await service.resolve('/qualifier/identifier');
+    const result = await resolvePath('/qualifier/identifier');
 
     expect(result).toEqual({
       type: 'redirect',
@@ -64,20 +40,20 @@ describe('ResolverService', () => {
   });
 
   it('returns not found when no default link exists', async () => {
-    mockSelectOnce([baseRow()]);
+    repoMock.listByPath.mockResolvedValueOnce([baseRow()]);
 
-    const result = await service.resolve('/qualifier/identifier');
+    const result = await resolvePath('/qualifier/identifier');
 
     expect(result).toEqual({ type: 'notFound', status: 404 });
   });
 
   it('returns linkset when linkType is linkset', async () => {
-    mockSelectOnce([
+    repoMock.listByPath.mockResolvedValueOnce([
       { ...baseRow(), hreflang: ['en'] },
       { ...baseRow(), href: 'https://example.com/fr', hreflang: ['fr'] },
     ]);
 
-    const result = await service.resolve('/qualifier/identifier', {
+    const result = await resolvePath('/qualifier/identifier', {
       linkType: 'linkset',
     });
 
@@ -111,9 +87,9 @@ describe('ResolverService', () => {
   });
 
   it('returns not found when linkset query has no links', async () => {
-    mockSelectOnce([]);
+    repoMock.listByPath.mockResolvedValueOnce([]);
 
-    const result = await service.resolve('/qualifier/identifier', {
+    const result = await resolvePath('/qualifier/identifier', {
       linkType: 'linkset',
     });
 
@@ -121,9 +97,9 @@ describe('ResolverService', () => {
   });
 
   it('redirects when linkType matches relation type', async () => {
-    mockSelectOnce([baseRow()]);
+    repoMock.listByPath.mockResolvedValueOnce([baseRow()]);
 
-    const result = await service.resolve('/qualifier/identifier', {
+    const result = await resolvePath('/qualifier/identifier', {
       linkType: 'untp:dpp',
     });
 
@@ -135,9 +111,9 @@ describe('ResolverService', () => {
   });
 
   it('returns not found when relation type not matched', async () => {
-    mockSelectOnce([baseRow()]);
+    repoMock.listByPath.mockResolvedValueOnce([baseRow()]);
 
-    const result = await service.resolve('/qualifier/identifier', {
+    const result = await resolvePath('/qualifier/identifier', {
       linkType: 'alternate',
     });
 

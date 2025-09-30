@@ -7,20 +7,20 @@ import {
   listLinksRoute,
   updateLinkRoute,
 } from './link.route';
-import { linksService } from './link.service';
+import { createLink, deleteLink, getLink, listLinks, updateLink } from './link.service';
 
 const app = new OpenAPIHono();
 
 app.openapi(createLinkRoute, async (c) => {
   const dto = c.req.valid('json');
-  const link = await linksService.createLink(dto);
+  const link = await createLink(dto);
 
   return c.json(link, 201);
 });
 
 app.openapi(getLinkRoute, async (c) => {
   const { id } = c.req.valid('param');
-  const link = await linksService.getLink(id);
+  const link = await getLink(id);
 
   if (!link) {
     return c.json({ message: 'Link not found' }, 404);
@@ -32,7 +32,7 @@ app.openapi(getLinkRoute, async (c) => {
 app.openapi(updateLinkRoute, async (c) => {
   const { id } = c.req.valid('param');
   const dto = c.req.valid('json');
-  const link = await linksService.updateLink(id, dto);
+  const link = await updateLink(id, dto);
 
   if (!link) {
     return c.json({ message: 'Link not found' }, 404);
@@ -43,7 +43,7 @@ app.openapi(updateLinkRoute, async (c) => {
 
 app.openapi(deleteLinkRoute, async (c) => {
   const { id } = c.req.valid('param');
-  const deleted = await linksService.deleteLink(id);
+  const deleted = await deleteLink(id);
 
   if (!deleted) {
     return c.json({ message: 'Link not found' }, 404);
@@ -54,7 +54,7 @@ app.openapi(deleteLinkRoute, async (c) => {
 
 app.openapi(listLinksRoute, async (c) => {
   const query = c.req.valid('query');
-  const result = await linksService.listLinks(query);
+  const result = await listLinks(query);
 
   return c.json(result);
 });

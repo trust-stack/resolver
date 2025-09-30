@@ -14,9 +14,9 @@ vi.mock('../request-context', () => ({
   }),
 }));
 
-import { linksService } from './link.service';
+import { createLink, deleteLink, getLink, listLinks, updateLink } from './link.service';
 
-describe('linksService (functional)', () => {
+describe('link service functions', () => {
   beforeEach(() => {
     repoMock.createLink.mockReset();
     repoMock.getLink.mockReset();
@@ -34,7 +34,7 @@ describe('linksService (functional)', () => {
       title: 'Example',
     });
 
-    await linksService.createLink({
+    await createLink({
       path: '/qualifier/identifier',
       relationType: 'related',
       href: 'https://example.com',
@@ -58,10 +58,10 @@ describe('linksService (functional)', () => {
       totalPages: 0,
     });
 
-    await expect(linksService.getLink('x')).resolves.toBeNull();
-    await expect(linksService.updateLink('x', {})).resolves.toBeNull();
-    await expect(linksService.deleteLink('x')).resolves.toBe(true);
-    await expect(linksService.listLinks({ page: 1, perPage: 10 })).resolves.toEqual({
+    await expect(getLink('x')).resolves.toBeNull();
+    await expect(updateLink('x', {})).resolves.toBeNull();
+    await expect(deleteLink('x')).resolves.toBe(true);
+    await expect(listLinks({ page: 1, perPage: 10 })).resolves.toEqual({
       items: [],
       page: 1,
       perPage: 10,

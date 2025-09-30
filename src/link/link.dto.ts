@@ -1,6 +1,6 @@
 import z from 'zod';
 
-import { links } from '../db/schema';
+import { links } from '../db/schema/links';
 import {
   CreateLinkSchema,
   LinkSchema,

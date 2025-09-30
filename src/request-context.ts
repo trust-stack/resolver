@@ -1,13 +1,15 @@
 import { MiddlewareHandler } from 'hono';
 import { getContext } from 'hono/context-storage';
 import { AsyncLocalStorage } from 'node:async_hooks';
+import { AppOptions } from '.';
 import type { AuthContext } from './auth';
-import { LinkRepositoryCf } from './infra/cf/link.repository.cf';
 import { LinkRepository } from './link/link.repository';
+import { ResolverRepository } from './resolver/resolver.repository';
 
 export type RequestContext = {
   auth: AuthContext;
   linksRepository: LinkRepository;
+  resolverRepository: ResolverRepository;
 };
 
 const storage = new AsyncLocalStorage<RequestContext>();
@@ -45,9 +47,10 @@ export const authMiddleware: MiddlewareHandler = async (c, next) => {
   return next();
 };
 
-export const dependencyMiddlewareFactory = () => {
+export const dependencyMiddlewareFactory = (options: AppOptions) => {
   const middleware: MiddlewareHandler = async (c, next) => {
-    c.set('linksRepository', new LinkRepositoryCf());
+    c.set('linksRepository', options.linksRepository);
+    c.set('resolverRepository', options.resolverRepository);
 
     return next();
   };

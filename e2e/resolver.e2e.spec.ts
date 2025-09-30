@@ -9,15 +9,7 @@ const dbRef = vi.hoisted(() => ({
   current: undefined as ReturnType<typeof drizzle> | undefined,
 }));
 
-vi.mock('../src/db/instance.ts', () => ({
-  getDb: () => {
-    if (!dbRef.current) {
-      throw new Error('Test database has not been initialised');
-    }
-    return dbRef.current;
-  },
-}));
-
+import { defaultSqliteOptions } from 'src/infra/sqlite';
 import { createApp } from '../src';
 
 let sqlite: Database.Database;
@@ -45,7 +37,7 @@ describe('resolver e2e', () => {
     await migrate(dbRef.current, {
       migrationsFolder: resolve(process.cwd(), 'drizzle'),
     });
-    app = createApp();
+    app = createApp(defaultSqliteOptions(dbRef.current as any));
   });
 
   afterAll(() => {
@@ -59,7 +51,11 @@ describe('resolver e2e', () => {
   const createLink = async (payload: CreateLinkPayload) => {
     const response = await app.request('/links', {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: {
+        'content-type': 'application/json',
+        'x-organization-id': '123',
+        'x-tenant-id': '456',
+      },
       body: JSON.stringify(payload),
     });
 

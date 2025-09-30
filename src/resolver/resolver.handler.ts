@@ -1,13 +1,13 @@
 import { OpenAPIHono } from '@hono/zod-openapi';
 
 import { resolveRoute } from './resolver.route';
-import { resolverService } from './resolver.service';
+import { resolve as resolvePath } from './resolver.service';
 
 const app = new OpenAPIHono();
 
 app.openapi(resolveRoute, async (c) => {
   const query = c.req.valid('query');
-  const result = await resolverService.resolve(c.req.path, query);
+  const result = await resolvePath(c.req.path, query);
 
   if (result.type === 'redirect') {
     return c.redirect(result.location, 307);
