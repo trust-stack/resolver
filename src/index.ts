@@ -1,15 +1,24 @@
-import {OpenAPIHono} from "@hono/zod-openapi";
+import { OpenAPIHono } from '@hono/zod-openapi';
+import { contextStorage } from 'hono/context-storage';
+import links from './link/link.handler';
+import { getOpenApiConfig } from './openapi/config';
+import { authMiddleware, dependencyMiddlewareFactory } from './request-context';
+import resolver from './resolver/resolver.handler';
 
-import links from "./link/link.handler.ts";
-import {getOpenApiConfig} from "./openapi/config.ts";
-import resolver from "./resolver/resolver.handler.ts";
+export function createApp() {
+  const app = new OpenAPIHono();
+  app.doc('/openapi.json', () => getOpenApiConfig());
 
-const app = new OpenAPIHono();
+  app.use(contextStorage());
+  app.use(authMiddleware);
+  app.use(dependencyMiddlewareFactory());
 
-app.route("/links", links);
+  app.route('/links', links);
+  app.route('/', resolver);
 
-app.doc("/openapi.json", () => getOpenApiConfig());
+  return app;
+}
 
-app.route("/", resolver);
-
+export type App = ReturnType<typeof createApp>;
+const app = createApp();
 export default app;

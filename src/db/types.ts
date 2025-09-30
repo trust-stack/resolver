@@ -1,3 +1,3 @@
-import {getDb} from "./instance.ts";
+import { getDb } from './instance';
 
 export type DB = ReturnType<typeof getDb>;

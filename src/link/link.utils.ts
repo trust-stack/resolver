@@ -1,4 +1,4 @@
-export const normalisePath = (path: string) => path.replace(/^\/+|\/+$/g, "");
+export const normalisePath = (path: string) => path.replace(/^\/+|\/+$/g, '');
 
 /**
  * Validate the path of a Link.
@@ -11,15 +11,15 @@ export function validatePath(path: string) {
 
   // Check if path is empty after cleaning
   if (!cleanPath) {
-    throw new Error("Path cannot be empty");
+    throw new Error('Path cannot be empty');
   }
 
   // Split path into segments and validate each pair
-  const segments = cleanPath.split("/");
+  const segments = cleanPath.split('/');
 
   // Path must have an even number of segments (qualifier/identifier pairs)
   if (segments.length % 2 !== 0) {
-    throw new Error("Path must consist of qualifier/identifier pairs");
+    throw new Error('Path must consist of qualifier/identifier pairs');
   }
 
   // Validate each segment
@@ -28,17 +28,14 @@ export function validatePath(path: string) {
     const identifier = segments[i + 1];
 
     if (!qualifier || !identifier) {
-      throw new Error("Both qualifier and identifier must be non-empty");
+      throw new Error('Both qualifier and identifier must be non-empty');
     }
 
     // Add any specific validation rules for qualifiers and identifiers here
     // For example, you might want to restrict characters or enforce patterns
-    if (
-      !/^[a-zA-Z0-9-_]+$/.test(qualifier) ||
-      !/^[a-zA-Z0-9-_]+$/.test(identifier)
-    ) {
+    if (!/^[a-zA-Z0-9-_]+$/.test(qualifier) || !/^[a-zA-Z0-9-_]+$/.test(identifier)) {
       throw new Error(
-        "Qualifiers and identifiers can only contain alphanumeric characters, hyphens, and underscores"
+        'Qualifiers and identifiers can only contain alphanumeric characters, hyphens, and underscores',
       );
     }
   }
@@ -52,35 +49,31 @@ export function validatePath(path: string) {
 export function validateType(type: string) {
   // Check if type is empty
   if (!type) {
-    throw new Error("Type cannot be empty");
+    throw new Error('Type cannot be empty');
   }
 
   // Check basic MIME type format (type/subtype)
   const mimeTypePattern = /^[a-zA-Z0-9-+.]+\/[a-zA-Z0-9-+.]+$/;
   if (!mimeTypePattern.test(type)) {
-    throw new Error(
-      "Invalid MIME type format. Must be in the format 'type/subtype'"
-    );
+    throw new Error("Invalid MIME type format. Must be in the format 'type/subtype'");
   }
 
   // Split into main type and subtype
-  const [mainType, subType] = type.split("/");
+  const [mainType, subType] = type.split('/');
 
   // Validate main type starts with standard categories
   const validMainTypes = [
-    "application",
-    "audio",
-    "font",
-    "image",
-    "message",
-    "model",
-    "multipart",
-    "text",
-    "video",
+    'application',
+    'audio',
+    'font',
+    'image',
+    'message',
+    'model',
+    'multipart',
+    'text',
+    'video',
   ];
   if (!validMainTypes.includes(mainType.toLowerCase())) {
-    throw new Error(
-      `Invalid main type. Must be one of: ${validMainTypes.join(", ")}`
-    );
+    throw new Error(`Invalid main type. Must be one of: ${validMainTypes.join(', ')}`);
   }
 }

@@ -1,24 +1,19 @@
-import {
-  LinkRow,
-  buildPaginatedLinksDto,
-  mapLinkRowToDto,
-  mapLinkRowsToDto,
-} from "./link.dto.ts";
+import { LinkRow, buildPaginatedLinksDto, mapLinkRowToDto, mapLinkRowsToDto } from './link.dto';
 
 const baseRow = (): LinkRow => ({
-  id: "link-id",
+  id: 'link-id',
   createdAt: new Date(),
-  path: "qualifier/identifier",
-  relationType: "related",
-  href: "https://example.com",
-  title: "Example",
-  type: "text/html",
+  path: 'qualifier/identifier',
+  relationType: 'related',
+  href: 'https://example.com',
+  title: 'Example',
+  type: 'text/html',
   isDefault: false,
-  hreflang: ["en"],
+  hreflang: ['en'],
 });
 
-describe("link dto mappers", () => {
-  it("maps a single row to a DTO", () => {
+describe('link dto mappers', () => {
+  it('maps a single row to a DTO', () => {
     const row = baseRow();
 
     expect(mapLinkRowToDto(row)).toEqual({
@@ -33,7 +28,7 @@ describe("link dto mappers", () => {
     });
   });
 
-  it("uses fallback values when href or title are missing", () => {
+  it('uses fallback values when href or title are missing', () => {
     const row = {
       ...baseRow(),
       href: null,
@@ -43,43 +38,41 @@ describe("link dto mappers", () => {
     };
 
     const dto = mapLinkRowToDto(row, {
-      href: "fallback-href",
-      title: "fallback-title",
-      type: "text/html",
-      hreflang: ["en"],
+      href: 'fallback-href',
+      title: 'fallback-title',
+      type: 'text/html',
+      hreflang: ['en'],
     });
 
     expect(dto).toEqual({
       id: row.id,
       path: row.path,
       relationType: row.relationType,
-      href: "fallback-href",
-      title: "fallback-title",
-      type: "text/html",
-      hreflang: ["en"],
+      href: 'fallback-href',
+      title: 'fallback-title',
+      type: 'text/html',
+      hreflang: ['en'],
       default: false,
     });
   });
 
-  it("throws when required fields are missing and no fallback is provided", () => {
+  it('throws when required fields are missing and no fallback is provided', () => {
     const row = {
       ...baseRow(),
       href: null,
     };
 
-    expect(() => mapLinkRowToDto(row)).toThrow(
-      "Link href is required to create DTO"
-    );
+    expect(() => mapLinkRowToDto(row)).toThrow('Link href is required to create DTO');
   });
 
-  it("maps multiple rows", () => {
+  it('maps multiple rows', () => {
     const dtoList = mapLinkRowsToDto([baseRow(), baseRow()]);
 
     expect(dtoList).toHaveLength(2);
-    expect(dtoList[0].id).toBe("link-id");
+    expect(dtoList[0].id).toBe('link-id');
   });
 
-  it("builds a paginated dto", () => {
+  it('builds a paginated dto', () => {
     const result = buildPaginatedLinksDto([baseRow()], {
       page: 2,
       perPage: 10,
@@ -89,13 +82,13 @@ describe("link dto mappers", () => {
     expect(result).toEqual({
       items: [
         {
-          id: "link-id",
-          path: "qualifier/identifier",
-          relationType: "related",
-          href: "https://example.com",
-          title: "Example",
-          type: "text/html",
-          hreflang: ["en"],
+          id: 'link-id',
+          path: 'qualifier/identifier',
+          relationType: 'related',
+          href: 'https://example.com',
+          title: 'Example',
+          type: 'text/html',
+          hreflang: ['en'],
           default: false,
         },
       ],
@@ -106,7 +99,7 @@ describe("link dto mappers", () => {
     });
   });
 
-  it("returns zero total pages when total is zero", () => {
+  it('returns zero total pages when total is zero', () => {
     const result = buildPaginatedLinksDto([], {
       page: 1,
       perPage: 10,

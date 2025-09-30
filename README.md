@@ -48,12 +48,12 @@ export DATABASE_URL="file:./local.db"
 
 ## Development Scripts
 
-Command | Description
---------|------------
-`pnpm test` | Run unit tests (Vitest, using in-memory mocks).
-`pnpm test:e2e` | Run end-to-end tests against an in-memory SQLite database (requires `better-sqlite3`).
-`pnpm build` | Type-check the codebase and regenerate `openapi.json` via the build script.
-`pnpm generate:openapi` | Regenerate the OpenAPI document without running `tsc`.
+| Command                 | Description                                                                            |
+| ----------------------- | -------------------------------------------------------------------------------------- |
+| `pnpm test`             | Run unit tests (Vitest, using in-memory mocks).                                        |
+| `pnpm test:e2e`         | Run end-to-end tests against an in-memory SQLite database (requires `better-sqlite3`). |
+| `pnpm build`            | Type-check the codebase and regenerate `openapi.json` via the build script.            |
+| `pnpm generate:openapi` | Regenerate the OpenAPI document without running `tsc`.                                 |
 
 ## OpenAPI Spec
 
@@ -86,6 +86,7 @@ E2E tests (`e2e/resolver.e2e.spec.ts`) spin up an in-memory `better-sqlite3` ins
 ## Continuous Integration
 
 `.github/workflows/tests.yml` runs:
+
 1. Install dependencies
 2. `pnpm build` (type-check + OpenAPI generation)
 3. `pnpm test`
