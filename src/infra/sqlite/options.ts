@@ -1,5 +1,5 @@
 import { drizzle } from 'drizzle-orm/better-sqlite3';
-import { AppOptions } from 'src/index';
+import { AppOptions } from '../../';
 import * as schema from '../../db/schema';
 import { LinkRepositoryCf, ResolverRepositoryCf } from '../sqlite';
 
