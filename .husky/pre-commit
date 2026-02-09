@@ -2,8 +2,8 @@
 set -e
 
 # Generate OpenAPI schema and stage it
-pnpm run generate:openapi
-git add openapi.json
+# pnpm run generate:openapi
+# git add openapi.json
 
 # Format staged files with Prettier via lint-staged
 pnpm exec lint-staged

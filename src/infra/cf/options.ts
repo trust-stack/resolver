@@ -1,5 +1,5 @@
 import { drizzle } from 'drizzle-orm/d1';
-import { AppOptions } from 'src/index';
+import { AppOptions } from '../../';
 import * as schema from '../../db/schema';
 import { LinkRepositoryCf, ResolverRepositoryCf } from '../sqlite';
 
