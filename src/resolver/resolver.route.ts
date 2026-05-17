@@ -10,13 +10,16 @@ export const resolveRoute = createRoute({
   },
   responses: {
     200: {
-      description: 'Resolved linkset',
+      description: 'Resolved linkset (RFC 9264)',
       content: {
-        'application/json': { schema: LinksetResponseSchema },
+        'application/linkset+json': { schema: LinksetResponseSchema },
       },
     },
     307: {
       description: 'Redirect to resolved link',
+    },
+    400: {
+      description: 'Invalid request (e.g. malformed path)',
     },
     404: {
       description: 'No matching link',

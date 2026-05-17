@@ -12,16 +12,21 @@ export const LinksetEntrySchema = z
     title: z.string().optional(),
     hreflang: z.array(z.string()).optional(),
     type: z.string().optional(),
+    method: z.array(z.string()).optional(),
+    encryptionMethod: z.string().optional(),
+    accessRole: z.string().optional(),
   })
-  .openapi({ description: 'Linkset entry' });
+  .openapi({ description: 'Linkset entry (RFC 9264)' });
+
+export const LinksetAnchorSchema = z
+  .object({
+    anchor: z.string().url(),
+  })
+  .passthrough()
+  .openapi({ description: 'Linkset anchor object with relation type keys per RFC 9264' });
 
 export const LinksetResponseSchema = z
   .object({
-    linkset: z.array(
-      z.object({
-        anchor: z.string().url(),
-        linkset: z.array(LinksetEntrySchema),
-      }),
-    ),
+    linkset: z.array(LinksetAnchorSchema),
   })
-  .openapi({ description: 'Linkset response payload' });
+  .openapi({ description: 'Linkset response payload (RFC 9264)' });

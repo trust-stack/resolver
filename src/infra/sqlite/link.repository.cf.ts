@@ -31,6 +31,9 @@ export class LinkRepositoryCf implements LinkRepository {
         type: dto.type,
         isDefault: dto.default ?? false,
         hreflang: dto.hreflang as LinkRow['hreflang'],
+        method: dto.method as LinkRow['method'],
+        encryptionMethod: dto.encryptionMethod,
+        accessRole: dto.accessRole,
         tenantId: auth.tenantId,
         organizationId: auth.organizationId,
         userId: auth.userId,
@@ -72,6 +75,9 @@ export class LinkRepositoryCf implements LinkRepository {
     if (dto.type !== undefined) updates.type = dto.type;
     if (dto.default !== undefined) updates.isDefault = dto.default;
     if (dto.hreflang !== undefined) updates.hreflang = dto.hreflang as LinkRow['hreflang'];
+    if (dto.method !== undefined) updates.method = dto.method as LinkRow['method'];
+    if (dto.encryptionMethod !== undefined) updates.encryptionMethod = dto.encryptionMethod;
+    if (dto.accessRole !== undefined) updates.accessRole = dto.accessRole;
 
     if (Object.keys(updates).length === 0) {
       return this.getLink(id);

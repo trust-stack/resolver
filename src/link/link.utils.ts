@@ -33,9 +33,9 @@ export function validatePath(path: string) {
 
     // Add any specific validation rules for qualifiers and identifiers here
     // For example, you might want to restrict characters or enforce patterns
-    if (!/^[a-zA-Z0-9-_]+$/.test(qualifier) || !/^[a-zA-Z0-9-_]+$/.test(identifier)) {
+    if (!/^[a-zA-Z0-9\-_.]+$/.test(qualifier) || !/^[a-zA-Z0-9\-_.]+$/.test(identifier)) {
       throw new Error(
-        'Qualifiers and identifiers can only contain alphanumeric characters, hyphens, and underscores',
+        'Qualifiers and identifiers can only contain alphanumeric characters, hyphens, underscores, and periods',
       );
     }
   }

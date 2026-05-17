@@ -53,17 +53,25 @@
                     "items": {
                       "type": "string"
                     },
-                    "example": [
-                      "en"
-                    ]
+                    "example": ["en"]
+                  },
+                  "method": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": ["GET"]
+                  },
+                  "encryptionMethod": {
+                    "type": "string",
+                    "example": "none"
+                  },
+                  "accessRole": {
+                    "type": "string",
+                    "example": "untp:accessRole#Anonymous"
                   }
                 },
-                "required": [
-                  "path",
-                  "relationType",
-                  "href",
-                  "title"
-                ],
+                "required": ["path", "relationType", "href", "title"],
                 "description": "Payload to create a link"
               }
             }
@@ -103,15 +111,21 @@
                       "items": {
                         "type": "string"
                       }
+                    },
+                    "method": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "encryptionMethod": {
+                      "type": "string"
+                    },
+                    "accessRole": {
+                      "type": "string"
                     }
                   },
-                  "required": [
-                    "id",
-                    "path",
-                    "relationType",
-                    "href",
-                    "title"
-                  ],
+                  "required": ["id", "path", "relationType", "href", "title"],
                   "description": "Link representation"
                 }
               }
@@ -184,15 +198,21 @@
                             "items": {
                               "type": "string"
                             }
+                          },
+                          "method": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "encryptionMethod": {
+                            "type": "string"
+                          },
+                          "accessRole": {
+                            "type": "string"
                           }
                         },
-                        "required": [
-                          "id",
-                          "path",
-                          "relationType",
-                          "href",
-                          "title"
-                        ],
+                        "required": ["id", "path", "relationType", "href", "title"],
                         "description": "Link representation"
                       }
                     },
@@ -213,13 +233,7 @@
                       "minimum": 0
                     }
                   },
-                  "required": [
-                    "items",
-                    "page",
-                    "perPage",
-                    "total",
-                    "totalPages"
-                  ],
+                  "required": ["items", "page", "perPage", "total", "totalPages"],
                   "description": "Paginated list of links"
                 }
               }
@@ -275,15 +289,21 @@
                       "items": {
                         "type": "string"
                       }
+                    },
+                    "method": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "encryptionMethod": {
+                      "type": "string"
+                    },
+                    "accessRole": {
+                      "type": "string"
                     }
                   },
-                  "required": [
-                    "id",
-                    "path",
-                    "relationType",
-                    "href",
-                    "title"
-                  ],
+                  "required": ["id", "path", "relationType", "href", "title"],
                   "description": "Link representation"
                 }
               }
@@ -342,9 +362,22 @@
                     "items": {
                       "type": "string"
                     },
-                    "example": [
-                      "en"
-                    ]
+                    "example": ["en"]
+                  },
+                  "method": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": ["GET"]
+                  },
+                  "encryptionMethod": {
+                    "type": "string",
+                    "example": "none"
+                  },
+                  "accessRole": {
+                    "type": "string",
+                    "example": "untp:accessRole#Anonymous"
                   }
                 },
                 "description": "Partial update payload for a link"
@@ -386,15 +419,21 @@
                       "items": {
                         "type": "string"
                       }
+                    },
+                    "method": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "encryptionMethod": {
+                      "type": "string"
+                    },
+                    "accessRole": {
+                      "type": "string"
                     }
                   },
-                  "required": [
-                    "id",
-                    "path",
-                    "relationType",
-                    "href",
-                    "title"
-                  ],
+                  "required": ["id", "path", "relationType", "href", "title"],
                   "description": "Link representation"
                 }
               }
@@ -442,9 +481,9 @@
         ],
         "responses": {
           "200": {
-            "description": "Resolved linkset",
+            "description": "Resolved linkset (RFC 9264)",
             "content": {
-              "application/json": {
+              "application/linkset+json": {
                 "schema": {
                   "type": "object",
                   "properties": {
@@ -456,53 +495,27 @@
                           "anchor": {
                             "type": "string",
                             "format": "uri"
-                          },
-                          "linkset": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "href": {
-                                  "type": "string",
-                                  "format": "uri"
-                                },
-                                "title": {
-                                  "type": "string"
-                                },
-                                "hreflang": {
-                                  "type": "array",
-                                  "items": {
-                                    "type": "string"
-                                  }
-                                },
-                                "type": {
-                                  "type": "string"
-                                }
-                              },
-                              "required": [
-                                "href"
-                              ],
-                              "description": "Linkset entry"
-                            }
                           }
                         },
-                        "required": [
-                          "anchor",
-                          "linkset"
-                        ]
+                        "required": ["anchor"],
+                        "additionalProperties": {
+                          "nullable": true
+                        },
+                        "description": "Linkset anchor object with relation type keys per RFC 9264"
                       }
                     }
                   },
-                  "required": [
-                    "linkset"
-                  ],
-                  "description": "Linkset response payload"
+                  "required": ["linkset"],
+                  "description": "Linkset response payload (RFC 9264)"
                 }
               }
             }
           },
           "307": {
             "description": "Redirect to resolved link"
+          },
+          "400": {
+            "description": "Invalid request (e.g. malformed path)"
           },
           "404": {
             "description": "No matching link"

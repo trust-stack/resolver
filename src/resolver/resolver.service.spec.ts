@@ -20,6 +20,9 @@ const baseRow = () => ({
   type: 'text/html',
   isDefault: false,
   hreflang: ['en'],
+  method: null,
+  encryptionMethod: null,
+  accessRole: null,
 });
 
 describe('resolver resolve()', () => {
@@ -66,7 +69,7 @@ describe('resolver resolve()', () => {
         linkset: [
           {
             anchor: 'https://truststack.link/qualifier/identifier',
-            linkset: [
+            'untp:dpp': [
               {
                 href: 'https://example.com',
                 title: 'Test Link',
