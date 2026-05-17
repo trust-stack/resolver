@@ -64,7 +64,10 @@ const buildLinksetResult = (path: string, rows: LinkRow[]): ResolverResult => {
     grouped[row.relationType] = entries;
   }
 
-  const anchorObject = { anchor, ...grouped } as { anchor: string } & Record<string, unknown>;
+  const anchorObject = { anchor, ...grouped } as { anchor: string } & Record<
+    string,
+    LinksetEntry[]
+  >;
 
   return {
     type: 'linkset',

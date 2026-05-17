@@ -22,7 +22,7 @@ export const LinksetAnchorSchema = z
   .object({
     anchor: z.string().url(),
   })
-  .passthrough()
+  .catchall(z.array(LinksetEntrySchema))
   .openapi({ description: 'Linkset anchor object with relation type keys per RFC 9264' });
 
 export const LinksetResponseSchema = z

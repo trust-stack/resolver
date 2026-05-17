@@ -499,7 +499,42 @@
                         },
                         "required": ["anchor"],
                         "additionalProperties": {
-                          "nullable": true
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "href": {
+                                "type": "string",
+                                "format": "uri"
+                              },
+                              "title": {
+                                "type": "string"
+                              },
+                              "hreflang": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "type": {
+                                "type": "string"
+                              },
+                              "method": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "encryptionMethod": {
+                                "type": "string"
+                              },
+                              "accessRole": {
+                                "type": "string"
+                              }
+                            },
+                            "required": ["href"],
+                            "description": "Linkset entry (RFC 9264)"
+                          }
                         },
                         "description": "Linkset anchor object with relation type keys per RFC 9264"
                       }
