@@ -12,6 +12,8 @@ export type AppOptions = {
   resolverRepository: ResolverRepository;
 };
 
+const DEFAULT_BASE_URL = process.env.RESOLVER_BASE_URL ?? 'https://truststack.link';
+
 export function createApp(options: AppOptions) {
   const app = new OpenAPIHono();
   app.doc('/openapi.json', () => getOpenApiConfig());
@@ -23,8 +25,20 @@ export function createApp(options: AppOptions) {
   app.use('/links/*', authMiddleware);
   app.route('/links', links);
 
-  // Public resolver routes (mounted after /links to avoid catch-all collisions)
+  app.get('/.well-known/resolver', (c) => {
+    return c.json({
+      name: 'Trust Stack Identity Resolver',
+      url: DEFAULT_BASE_URL,
+      supportedLinkTypes: [
+        { prefix: 'untp', types: ['dpp', 'dcc', 'dfr', 'dte', 'idr', 'dia'] },
+        { prefix: 'gs1', types: ['pip', 'hasRetailers', 'recipeInfo'] },
+      ],
+      specification: 'https://untp.unece.org/docs/specification/IdentityResolver',
+      conformsTo: ['ISO/IEC 18975', 'IETF RFC 9264'],
+    });
+  });
 
+  // Public resolver routes (mounted after /links to avoid catch-all collisions)
   app.route('/', resolver);
 
   return app;

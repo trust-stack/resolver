@@ -16,6 +16,12 @@ export const CreateLinkSchema = z
       .array(z.string())
       .optional()
       .openapi({ example: ['en'] }),
+    method: z
+      .array(z.string())
+      .optional()
+      .openapi({ example: ['GET'] }),
+    encryptionMethod: z.string().optional().openapi({ example: 'none' }),
+    accessRole: z.string().optional().openapi({ example: 'untp:accessRole#Anonymous' }),
   })
   .openapi({ description: 'Payload to create a link' });
 
@@ -33,6 +39,9 @@ export const LinkSchema = z
     type: z.string().optional(),
     default: z.boolean().optional(),
     hreflang: z.array(z.string()).optional(),
+    method: z.array(z.string()).optional(),
+    encryptionMethod: z.string().optional(),
+    accessRole: z.string().optional(),
   })
   .openapi({ description: 'Link representation' });
 

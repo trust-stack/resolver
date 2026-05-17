@@ -128,7 +128,7 @@ describe('resolver e2e', () => {
         linkset: [
           {
             anchor: 'https://truststack.link/qualifier/identifier',
-            linkset: expect.arrayContaining([
+            'untp:dpp': expect.arrayContaining([
               {
                 href: 'https://example.com',
                 title: 'Test Link',

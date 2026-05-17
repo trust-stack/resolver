@@ -15,6 +15,13 @@
       "when": 1759262975782,
       "tag": "0001_lethal_shadow_king",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1778976639147,
+      "tag": "0002_lying_the_santerians",
+      "breakpoints": true
     }
   ]
 }

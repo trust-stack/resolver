@@ -42,6 +42,9 @@ export function mapLinkRowToDto(row: LinkRow, fallback?: Partial<LinkDtoFallback
     type,
     hreflang,
     default: isDefault ?? undefined,
+    method: row.method ?? undefined,
+    encryptionMethod: row.encryptionMethod ?? undefined,
+    accessRole: row.accessRole ?? undefined,
   };
 }
 

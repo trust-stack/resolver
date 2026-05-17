@@ -29,6 +29,9 @@ export type LinksetEntry = {
   title?: string;
   hreflang?: string[];
   type?: string;
+  method?: string[];
+  encryptionMethod?: string;
+  accessRole?: string;
 };
 
 const buildAnchor = (path: string, baseUrl: string) => {
@@ -41,28 +44,37 @@ const mapRowToLinksetEntry = (row: LinkRow): LinksetEntry => {
   if (row.title) entry.title = row.title;
   if (row.hreflang?.length) entry.hreflang = row.hreflang;
   if (row.type) entry.type = row.type;
+  if (row.method?.length) entry.method = row.method;
+  if (row.encryptionMethod) entry.encryptionMethod = row.encryptionMethod;
+  if (row.accessRole) entry.accessRole = row.accessRole;
   return entry;
 };
 
 const buildLinksetResult = (path: string, rows: LinkRow[]): ResolverResult => {
-  if (!rows.length) {
+  const withHref = rows.filter((r) => r.href);
+  if (!withHref.length) {
     return { type: 'notFound', status: 404 as const };
   }
+
   const anchor = buildAnchor(path, DEFAULT_BASE_URL);
-  const linksetEntries = rows.filter((r) => r.href).map(mapRowToLinksetEntry);
-  if (!linksetEntries.length) {
-    return { type: 'notFound', status: 404 as const };
+  const grouped: Record<string, LinksetEntry[]> = {};
+  for (const row of withHref) {
+    if (row.relationType === 'anchor') continue;
+    const entries = grouped[row.relationType] ?? [];
+    entries.push(mapRowToLinksetEntry(row));
+    grouped[row.relationType] = entries;
   }
+
+  const anchorObject = { anchor, ...grouped } as { anchor: string } & Record<
+    string,
+    LinksetEntry[]
+  >;
+
   return {
     type: 'linkset',
     status: 200 as const,
     body: {
-      linkset: [
-        {
-          anchor,
-          linkset: linksetEntries,
-        },
-      ],
+      linkset: [anchorObject],
     },
   };
 };
