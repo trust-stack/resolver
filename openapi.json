@@ -550,7 +550,21 @@
             "description": "Redirect to resolved link"
           },
           "400": {
-            "description": "Invalid request (e.g. malformed path)"
+            "description": "Invalid request (e.g. malformed path)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["message"],
+                  "description": "Error response"
+                }
+              }
+            }
           },
           "404": {
             "description": "No matching link"

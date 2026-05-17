@@ -1,6 +1,6 @@
 import { createRoute } from '@hono/zod-openapi';
 
-import { LinksetResponseSchema, ResolverQuerySchema } from './resolver.schema';
+import { ErrorResponseSchema, LinksetResponseSchema, ResolverQuerySchema } from './resolver.schema';
 
 export const resolveRoute = createRoute({
   method: 'get',
@@ -20,6 +20,9 @@ export const resolveRoute = createRoute({
     },
     400: {
       description: 'Invalid request (e.g. malformed path)',
+      content: {
+        'application/json': { schema: ErrorResponseSchema },
+      },
     },
     404: {
       description: 'No matching link',

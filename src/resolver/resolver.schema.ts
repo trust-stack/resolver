@@ -25,6 +25,12 @@ export const LinksetAnchorSchema = z
   .catchall(z.array(LinksetEntrySchema))
   .openapi({ description: 'Linkset anchor object with relation type keys per RFC 9264' });
 
+export const ErrorResponseSchema = z
+  .object({
+    message: z.string(),
+  })
+  .openapi({ description: 'Error response' });
+
 export const LinksetResponseSchema = z
   .object({
     linkset: z.array(LinksetAnchorSchema),

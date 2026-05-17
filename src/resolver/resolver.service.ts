@@ -59,6 +59,7 @@ const buildLinksetResult = (path: string, rows: LinkRow[]): ResolverResult => {
   const anchor = buildAnchor(path, DEFAULT_BASE_URL);
   const grouped: Record<string, LinksetEntry[]> = {};
   for (const row of withHref) {
+    if (row.relationType === 'anchor') continue;
     const entries = grouped[row.relationType] ?? [];
     entries.push(mapRowToLinksetEntry(row));
     grouped[row.relationType] = entries;

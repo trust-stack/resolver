@@ -1,5 +1,6 @@
 import { OpenAPIHono } from '@hono/zod-openapi';
 
+import { InvalidPathError } from '../link/link.utils';
 import { resolveRoute } from './resolver.route';
 import { resolve as resolvePath } from './resolver.service';
 
@@ -29,8 +30,10 @@ app.openapi(resolveRoute, async (c) => {
 
     return c.json({ message: 'Link not found' }, 404);
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Invalid request';
-    return c.json({ message }, 400);
+    if (error instanceof InvalidPathError) {
+      return c.json({ message: error.message }, 400);
+    }
+    throw error;
   }
 });
 
